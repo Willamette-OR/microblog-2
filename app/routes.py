@@ -5,4 +5,14 @@ from app import app
 def index():
     """This function implements what the index page displays."""
 
-    return "Hello World!"
+    user = {'username': 'Peipei'}
+
+    return """
+<html>
+    <head>
+        <title>Home Page - Microblog</title>
+    </head>
+    <body>
+        <h1>Hello, """ + user['username'] + """!</h1>
+    </body>
+</html>"""
