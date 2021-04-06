@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect
+from flask import render_template, flash, redirect, url_for
 from app import app
 from app.form import LoginForm
 
@@ -44,6 +44,16 @@ def login():
         # When you call the flash() function, Flask stores the message, but flashed messages will not magically appear in web pages. 
         # The templates of the application need to render these flashed messages in a way that works for the site layout.
         flash("Login requested for user {}, remember_me={}".format(form.username.data, form.remember_me.data))
-        return redirect('/index')
+
+        # One problem with writing links directly in templates and source files is that if one day you decide to reorganize your links, 
+        # then you are going to have to search and replace these links in your entire application.
+        # To have better control over these links, Flask provides a function called url_for(), 
+        # which generates URLs using its internal mapping of URLs to view functions.
+        # The argument to url_for() is the endpoint name, which is the name of the view function.
+        # The fact is that URLs are much more likely to change than view function names, which are completely internal. 
+        # A secondary reason is that as you will learn later, some URLs have dynamic components in them, 
+        # so generating those URLs by hand would require concatenating multiple elements, which is tedious and error prone. 
+        # The url_for() is also able to generate these complex URLs.
+        return redirect(url_for('index'))
     
     return render_template('login.html', title='Sign In', form=form)
