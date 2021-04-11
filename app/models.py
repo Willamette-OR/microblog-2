@@ -1,10 +1,29 @@
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
-from app import db 
+from flask_login import UserMixin
+from app import db, login  
 
 
-class User(db.Model):
-    """This class implements the database model for users, derived from the parent class of db.Model."""
+class User(UserMixin, db.Model):
+    """
+    This class implements the database model for users, derived from the parent class of db.Model.
+
+    The Flask-Login extension works with the application's user model, and expects certain properties and 
+    methods to be implemented in it. This approach is nice, because as long as these required items are added to the model, 
+    Flask-Login does not have any other requirements, so for example, 
+    it can work with user models that are based on any database system.
+
+    The four required items are listed below:
+
+    is_authenticated: a property that is True if the user has valid credentials or Falseotherwise.
+    is_active: a property that is True if the user's account is active or False otherwise.
+    is_anonymous: a property that is False for regular users, and True for a special, anonymous user.
+    get_id(): a method that returns a unique identifier for the user as a string (unicode, if using Python 2).
+
+    I can implement these four easily, but since the implementations are fairly generic, 
+    Flask-Login provides a mixin class called UserMixin that includes generic implementations that 
+    are appropriate for most user model classes.
+    """
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
@@ -35,6 +54,12 @@ class User(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+
+@login.user_loader
+def load_user(id):
+    """This function implements a user loader, required by Flask-Login, and returns the user object given a user id."""
+    return User.query.get(int(id))
 
 
 class Post(db.Model):
