@@ -1,6 +1,7 @@
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
+from hashlib import md5
 from app import db, login  
 
 
@@ -54,6 +55,15 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def avatar(self, size):
+        """
+        This method currently leverages Gravatar to generate avatars for users.
+        In the future, if it is decided to use something other than Gravatar, I can simply update this method,
+        and avatars will be updated but without having to change all the templates where avatars are rendered.
+        """
+        digest = md5(self.email.lower().encode('utf-8')).hexdigest()
+        return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(digest, size)
 
 
 @login.user_loader
