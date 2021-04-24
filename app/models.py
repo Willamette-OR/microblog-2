@@ -46,6 +46,8 @@ class User(UserMixin, db.Model):
     # The lazy argument defines how the database query for the relationship will be issued, which is something that I will discuss later. 
     # Don't worry if these details don't make much sense just yet, I'll show you
     posts = db.relationship('Post', backref='author', lazy='dynamic')
+    about_me = db.Column(db.String(140))
+    last_seen = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
         return "<User: {}>".format(self.username)
