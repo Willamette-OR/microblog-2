@@ -124,7 +124,7 @@ def user(username):
 def edit_profile():
     """This function handles the logic and rendering for profile editing."""
 
-    form = EditProfileForm()
+    form = EditProfileForm(current_user.username)
     if form.validate_on_submit():
         current_user.username = form.username.data
         current_user.about_me = form.about_me.data
