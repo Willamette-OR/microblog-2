@@ -79,6 +79,23 @@ class User(UserMixin, db.Model):
         digest = md5(self.email.lower().encode('utf-8')).hexdigest()
         return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(digest, size)
 
+    def follow(self, user):
+        """This method adds a user to the list of followed's of the self user, if not already followed."""
+
+        if not self.is_following(user):
+            self.followed.append(user)
+
+    def unfollow(self, user):
+        """This method removes a user from the list of followe's of the self user, if still followed."""
+
+        if self.is_following(user):
+            self.followed.remove(user)
+
+    def is_following(self, user):
+        """This method checks if a user is being followed by the self user."""
+
+        return self.followed.filter(followers.c.followed_id == user.id).count() > 0
+
 
 @login.user_loader
 def load_user(id):
