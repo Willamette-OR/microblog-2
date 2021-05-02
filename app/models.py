@@ -97,10 +97,12 @@ class User(UserMixin, db.Model):
         return self.followed.filter(followers.c.followed_id == user.id).count() > 0
 
     def followed_posts(self):
-        """This method queries all posts of self's followed users and order them by descending timestamps."""
+        """This method queries all posts of self and self's followed users and order them by descending timestamps."""
 
-        return Post.query.join(followers, (followers.c.followed_id==Post.user_id)).filter(
-            followers.c.follower_id==self.id).order_by(Post.datetime.desc())
+        followed = Post.query.join(followers, (followers.c.followed_id==Post.user_id)).filter(
+            followers.c.follower_id==self.id)
+        own = Post.query.filter_by(user_id=self.id)
+        return followed.union(own).order_by(Post.datetime.desc())
 
 
 @login.user_loader
