@@ -55,3 +55,10 @@ class EditProfileForm(FlaskForm):
             user = User.query.filter_by(username=username.data).first()
             if user is not None:
                 raise ValidationError("Please use a different username.")
+
+
+class EmptyForm(FlaskForm):
+    """This child class of FlaskForm implement an empty form, as a tool to prevent CSRF attacks 
+    when handling requests to change the state of the app."""
+
+    submit = SubmitField('Submit')
