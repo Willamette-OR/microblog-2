@@ -62,3 +62,10 @@ class EmptyForm(FlaskForm):
     when handling requests to change the state of the app."""
 
     submit = SubmitField('Submit')
+
+
+class PostForm(FlaskForm):
+    """This child class of FlaskForm implements a form to take in new posts from users."""
+
+    post = TextAreaField('Say something', validators=[DataRequired(), Length(min=1, max=140)])
+    submit = SubmitField('Submit')
