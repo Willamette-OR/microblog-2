@@ -33,7 +33,10 @@ def index():
         flash('Your post is now live!')
         return redirect(url_for('index'))
 
-    posts = current_user.followed_posts()
+    # The followed_posts method of the User class returns a SQLAlchemy query object 
+    # that is configured to grab the posts the user is interested in from the database.
+    # Calling all() on this query triggers its execution, with the return value being a list with all the results.
+    posts = current_user.followed_posts().all()
 
     return render_template('index.html', title='Home', posts=posts, form=form)
 
