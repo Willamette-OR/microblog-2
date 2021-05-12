@@ -193,3 +193,10 @@ def unfollow(username):
         return redirect(url_for('index'))
 
 
+@app.route('/explore')
+@login_required
+def explore():
+    """This function handles requests to explore all user posts."""
+
+    posts = Post.query.order_by(Post.datetime.desc()).all()
+    return render_template('index.html', title='Explore', posts=posts)
