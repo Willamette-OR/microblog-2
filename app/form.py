@@ -76,3 +76,11 @@ class ResetPasswordRequestForm(FlaskForm):
 
     email = StringField('Email', validators=[DataRequired(), Email()])
     submit = SubmitField('Request Password Request')
+
+
+class ResetPasswordForm(FlaskForm):
+    """This child class of FlaskForm implements a form to reset user passwords."""
+
+    password = PasswordField('Password', validators=[DataRequired()])
+    repeat_password = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Reset Password')
