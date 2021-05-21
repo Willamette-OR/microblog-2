@@ -5,6 +5,7 @@
     <h1>Hello, {{ current_user.username }}!</h1>
     {% if form %}
         {{ wtf.quick_form(form) }}
+        <br>
     {% endif %}
     {% for post in posts %}
         {% include '_post.html' %}
