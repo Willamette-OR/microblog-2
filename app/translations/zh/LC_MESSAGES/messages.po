@@ -38,7 +38,7 @@ msgstr "找不到用户：%(username)s。"
 #: app/templates/_post.html:14
 #, python-format
 msgid "%(username)s said %(when)s:"
-msgstr "%(username)s 提到 %(when)s："
+msgstr "%(username)s在 %(when)s提到："
 
 #: app/templates/index.html:5
 #, python-format
