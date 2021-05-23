@@ -3,3 +3,5 @@ __pycache__/
 app/__pycache__/
 app.db
 migrations/__pycache__/
+messages.pot
+app/translations/zh/LC_MESSAGES/messages.mo
