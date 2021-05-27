@@ -3,6 +3,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from flask_babel import _, get_locale
 from werkzeug.urls import url_parse
 from datetime import datetime 
+from guess_language import guess_language
 from app import app, db
 from app.form import LoginForm, RegistrationForm, EditProfileForm, EmptyForm, PostForm, ResetPasswordRequestForm, ResetPasswordForm
 from app.models import User, Post
@@ -36,7 +37,10 @@ def index():
 
     form = PostForm()
     if form.validate_on_submit():
-        post = Post(body=form.post.data, author=current_user)
+        language = guess_language(form.post.data)
+        if language == 'UNKNOWN' or len(language) > 5:
+            language = ''
+        post = Post(body=form.post.data, author=current_user, language=language)
         db.session.add(post)
         db.session.commit()
         flash(_('Your post is now live!'))
