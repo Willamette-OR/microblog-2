@@ -17,12 +17,9 @@ app.config.from_object(Config)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-# register blueprints
-from app.errors import bp as errors_bp
-app.register_blueprint(errors_bp)
 
 login = LoginManager(app)
-login.login_view = 'login'
+login.login_view = 'auth.login'
 login.login_message = _l("Please log in to access this page.")
 mail = Mail(app)
 bootstrap = Bootstrap(app)
@@ -35,6 +32,15 @@ def get_locale():
     """This function returns the selected language to be used for the requests, based on the Accept-Language header from clients"""
 
     return request.accept_languages.best_match(app.config['LANGUAGES'])
+
+
+# register the blueprint for authentication handling
+from app.auth import bp as auth_bp
+app.register_blueprint(auth_bp, url_prefix='/auth')
+
+# register the blueprint for error handling
+from app.errors import bp as errors_bp
+app.register_blueprint(errors_bp)
 
 
 from app import routes, models
