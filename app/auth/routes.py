@@ -13,7 +13,7 @@ def login():
     """This function implements the login view."""
 
     if current_user.is_authenticated:
-            return redirect(url_for('index'))
+            return redirect(url_for('main.index'))
 
     form = LoginForm()
 
@@ -51,7 +51,7 @@ def login():
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
-            return redirect(url_for('index'))
+            return redirect(url_for('main.index'))
         return redirect(next_page)
     
     return render_template('auth/login.html', title='Sign In', form=form)
@@ -62,7 +62,7 @@ def logout():
     """This function logs out users."""
 
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for('main.index'))
 
 
 @bp.route('/register', methods=['GET', 'POST'])
@@ -70,7 +70,7 @@ def register():
     """This function provides a view to register new users."""
 
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     form = RegistrationForm()
 
@@ -90,7 +90,7 @@ def reset_password_request():
     """This function handles requests to email a link to reset user passwords."""
 
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     
     form = ResetPasswordRequestForm()
     if form.validate_on_submit():
@@ -108,11 +108,11 @@ def reset_password(token):
     """This function handles requests to reset passwords."""
 
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     
     user = User.verify_reset_password_token(token)
     if not user:
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     form = ResetPasswordForm()
     if form.validate_on_submit():
