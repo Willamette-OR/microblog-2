@@ -100,7 +100,7 @@ def follow(username):
             flash(_('User %(username)s not found.', username=username))
             return redirect(url_for('index'))
         if user == current_user:
-            flask('You cannot follow yourself!')
+            flash('You cannot follow yourself!')
             return redirect(url_for('user', username=username))
         current_user.follow(user)
         db.session.commit()
