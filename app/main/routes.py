@@ -1,9 +1,9 @@
-from flask import render_template, flash, redirect, url_for, request, g, jsonify
+from flask import current_app, render_template, flash, redirect, url_for, request, g, jsonify
 from flask_login import current_user, login_required
 from flask_babel import _, get_locale
 from datetime import datetime 
 from guess_language import guess_language
-from app import app, db
+from app import db
 from app.main import bp
 from app.main.forms import EditProfileForm, EmptyForm, PostForm
 from app.models import User, Post
@@ -50,7 +50,7 @@ def index():
     page = request.args.get('page', 1, type=int)
     # The paginate() call returns an object of the Paginate class.
     # The items attribute of this object contains the list of items retrieved for the selected page.
-    posts = current_user.followed_posts().paginate(page, app.config['POSTS_PER_PAGE'], False)
+    posts = current_user.followed_posts().paginate(page, current_app.config['POSTS_PER_PAGE'], False)
     next_url = url_for('main.index', page=posts.next_num) if posts.has_next else None
     prev_url = url_for('main.index', page=posts.prev_num) if posts.has_prev else None
 
@@ -63,7 +63,7 @@ def user(username):
 
     user = User.query.filter_by(username=username).first_or_404()
     page = request.args.get('page', 1, type=int)
-    posts = user.posts.order_by(Post.datetime.desc()).paginate(page, app.config['POSTS_PER_PAGE'], False)
+    posts = user.posts.order_by(Post.datetime.desc()).paginate(page, current_app.config['POSTS_PER_PAGE'], False)
     next_url = url_for('main.user', username=user.username, page=posts.next_num) if posts.has_next else None 
     prev_url = url_for('main.user', username=user.username, page=posts.prev_num) if posts.has_prev else None 
     form = EmptyForm()
@@ -140,7 +140,7 @@ def explore():
     page = request.args.get('page', 1, type=int)
     # The paginate() call returns an object of the Paginate class.
     # The items attribute of this object contains the list of items retrieved for the selected page.
-    posts = Post.query.order_by(Post.datetime.desc()).paginate(page, app.config['POSTS_PER_PAGE'], False)
+    posts = Post.query.order_by(Post.datetime.desc()).paginate(page, current_app.config['POSTS_PER_PAGE'], False)
     next_url = url_for('main.explore', page=posts.next_num) if posts.has_next else None
     prev_url = url_for('main.explore', page=posts.prev_num) if posts.has_prev else None
 
