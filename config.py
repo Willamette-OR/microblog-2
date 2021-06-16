@@ -18,4 +18,11 @@ class Config:
     POSTS_PER_PAGE = 3
     LANGUAGES = ['en', 'zh']
     MS_TRANSLATOR_KEY = os.environ.get('MS_TRANSLATOR_KEY')
+
+
+class TestConfig(Config):
+    """A child class of Config, with both new & changed configurations for unit testing."""
+
+    TESTING = True 
+    SQLALCHEMY_DATABASE_URI = 'sqlite://'
     
