@@ -25,7 +25,7 @@ flask-moment=0.7.0=py_0
 flask-sqlalchemy=2.5.1=pyhd3eb1b0_0
 flask-wtf=0.14.3=py_0
 greenlet=1.0.0=py39h2531618_2
-guess-language-spirit=0.5.3=pypi_0
+# guess-language-spirit=0.5.3=pypi_0
 idna=2.10=pyhd3eb1b0_0
 itsdangerous=1.1.0=pyhd3eb1b0_0
 jinja2=2.11.3=pyhd3eb1b0_0
