@@ -21,6 +21,7 @@ class Config:
     POSTS_PER_PAGE = 3
     LANGUAGES = ['en', 'zh']
     MS_TRANSLATOR_KEY = os.environ.get('MS_TRANSLATOR_KEY')
+    ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
 
 
 class TestConfig(Config):

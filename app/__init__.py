@@ -10,6 +10,7 @@ from flask_moment import Moment
 from flask_babel import Babel, lazy_gettext as _l
 import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
+from elasticsearch import Elasticsearch
 
 
 db = SQLAlchemy()
@@ -30,7 +31,7 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
-    # Initialized flask extensions
+    # Initialize flask extensions
     db.init_app(app)
     migrate.init_app(app, db)
     login.init_app(app)
@@ -38,6 +39,9 @@ def create_app(config_class=Config):
     bootstrap.init_app(app)
     moment.init_app(app)
     babel.init_app(app)
+
+    # Initialize elasticsearch
+    app.elasticsearch = Elasticsearch(app.config['ELASTICSEARCH_URL']) if app.config['ELASTICSEARCH_URL'] else None
 
     # register the blueprint for authentication handling
     from app.auth import bp as auth_bp
