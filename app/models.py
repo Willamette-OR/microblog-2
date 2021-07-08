@@ -133,6 +133,9 @@ def load_user(id):
 class Post(db.Model):
     """This class implements the database model for posts, derived from the parent class of db.Model."""
 
+    # an attribute for the full-text search abstraction
+    __searchable__ = ['body']
+
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.String(140))
     # When you pass a function as a default, SQLAlchemy will set the field to the value of calling that function 
