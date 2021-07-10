@@ -5,7 +5,72 @@ from flask_login import UserMixin
 from hashlib import md5
 from time import time
 import jwt 
-from app import db, login  
+from app import db, login 
+from app.search import query_index, add_to_index, remove_from_index 
+
+
+class SearchableMixin(object):
+    """
+    A class for SQLAlchemy data models to inherit from, with methods for full-text search and synchronizing database changes
+    between SQLAlchemy and index.
+    """
+
+    @classmethod
+    def search(cls, expression, page, per_page):
+        """Class method to do full-text search and return a list of data objects."""
+
+        # search, and return id's of objects in the search results & the total number of search results
+        ids, total = query_index(cls.__tablename__, expression, page, per_page)
+        # return null values if the search did not return any results
+        if total == 0:
+            return cls.query.filter_by(id=0), 0
+        # return objects in the same order returned by the search, and the total number of search results
+        when = []
+        for i in range(len(ids)):
+            when.append((ids[i], i))
+        return cls.query.filter(cls.id.in_(ids)).order_by(db.case(when, value=cls.id)), total
+
+    @classmethod
+    def before_commit(cls, session):
+        """
+        Class method to save db session changes before committing, so that the same changes can be applied to the search 
+        index after successfully committing
+        """
+
+        # save objects that are added, updated, or deleted into a dictionary attached to the session
+        session._changes = {
+            'add': list(session.new),
+            'update': list(session.dirty),
+            'delete': list(session.deleted)
+        }
+
+    @classmethod
+    def after_commit(cls, session):
+        """Class method to update the full-text search index based on changes made to the SQLAlchemy db."""
+
+        for obj in session._changes['add']:
+            if isinstance(obj, 'SearchableMixin'):
+                add_to_index(obj.__tablename__, obj)
+        for obj in session._changes['update']:
+            if isinstance(obj, 'SearchableMixin'):
+                add_to_index(obj.__tablename__, obj)
+        for obj in session._changes['delete']:
+            if isinstance(obj, 'SearchableMixin'):
+                remove_from_index(obj.__tablename__, obj)
+        session._changes = None
+
+    @classmethod
+    def reindex(cls):
+        """Class method to refresh a full-text search index with all the data from the relational db."""
+
+        for obj in cls.query:
+            add_to_index(cls.__tablename__, obj)
+
+
+# set up event handlers that make SQLAlchemy call SearchableMixin's before_commit() and after_commit()
+# before and after commits
+db.event.listen(db.session, 'before_commit', SearchableMixin.before_commit)
+db.event.listen(db.session, 'after_commit', SearchableMixin.after_commit)
 
 
 followers = db.Table(
@@ -130,7 +195,7 @@ def load_user(id):
     return User.query.get(int(id))
 
 
-class Post(db.Model):
+class Post(SearchableMixin, db.Model):
     """This class implements the database model for posts, derived from the parent class of db.Model."""
 
     # an attribute for the full-text search abstraction
