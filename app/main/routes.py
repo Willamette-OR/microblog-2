@@ -167,4 +167,18 @@ def translate_text():
 def search():
     """This function handles requests to do full-text search."""
 
-    return
+    # redirect to 'explore' if search form is empty
+    if not g.search_form.validate():
+        return redirect(url_for('main.explore'))
+    # get page number and run search
+    page = request.args.get('page', 1, type=int)
+    posts, total = Post.search(g.search_form.q.data, page, 
+                               current_app.config['POSTS_PER_PAGE'])
+    # set up pagination
+    next_url = url_for('main.search', q=g.search_form.q.data, page=page+1) \
+        if page * current_app.config['POSTS_PER_PAGE'] < total else None
+    prev_url = url_for('main.search', q=g.search_form.q.data, page=page-1) \
+        if page > 1 else None
+    # return
+    return render_template('search.html', title='Search', posts=posts,
+                           next_url=next_url, prev_url=prev_url)
