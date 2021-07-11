@@ -5,7 +5,7 @@ from datetime import datetime
 from guess_language import guess_language
 from app import db
 from app.main import bp
-from app.main.forms import EditProfileForm, EmptyForm, PostForm
+from app.main.forms import EditProfileForm, EmptyForm, PostForm, SearchForm
 from app.models import User, Post
 from app.translate import translate
 
@@ -20,6 +20,7 @@ def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
+        g.search_form = SearchForm()
 
     # For any request, add to the g object the selected language returned by Flask-Babel via the get_locale() function.
     # The purpose is to make the selected language accessible from the base template.
@@ -159,3 +160,11 @@ def translate_text():
     return jsonify({'text': translate(request.form['text'],
                                       request.form['source_language'],
                                       request.form['dest_language'])})
+
+
+@bp.route('/search')
+@login_required
+def search():
+    """This function handles requests to do full-text search."""
+
+    return
