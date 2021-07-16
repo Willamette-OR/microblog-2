@@ -7,7 +7,7 @@ WORKDIR /home/microblog
 COPY requirements.txt requirements.txt
 RUN conda create --prefix ./venv
 RUN conda install --prefix ./venv -c conda-forge --file requirements.txt 
-RUN venv/bin/pip install guess-language-spirit==0.5.3
+RUN venv/bin/pip install guess-language-spirit==0.5.3 pymysql cryptography
 RUN conda install --prefix ./venv/ gunicorn
 
 COPY app app
