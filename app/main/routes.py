@@ -59,6 +59,7 @@ def index():
 
 
 @bp.route('/user/<username>')
+@login_required
 def user(username):
     """This function provides a view for the profile of the logged in user."""
 
@@ -70,6 +71,16 @@ def user(username):
     form = EmptyForm()
 
     return render_template('user.html', user=user, posts=posts.items, next_url=next_url, prev_url=prev_url, form=form)
+
+
+@bp.route('/user/<username>/popup', methods=['GET', 'POST'])
+def user_popup(username):
+    """This view function renders user info on a popup window."""
+
+    user = User.query.filter_by(username=username).first_or_404()
+    form = EmptyForm()
+
+    return render_template('user_popup.html', user=user, form=form)
 
 
 @bp.route('/edit_profile', methods=['POST', 'GET'])
