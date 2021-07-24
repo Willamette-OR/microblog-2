@@ -17,9 +17,12 @@
                 {% endif %}
                 {% if user.last_seen %}
                 <p>
-                    Last seen on: {{ moment(user.last_seen).format('LLL') }}
+                    Last seen on: {{ moment(user.last_seen).format('lll') }}
                 </p>
                 {% endif %}
+                <p>
+                    {{ user.followers.count() }} followers, {{ user.followed.count() }} following
+                </p>
                 {% if user != current_user %}
                     {% if not current_user.is_following(user) %}
                     <p>
