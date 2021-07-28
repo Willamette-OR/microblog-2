@@ -53,3 +53,14 @@ class SearchForm(FlaskForm):
         if 'csrf_enabled' not in kwargs:
             kwargs['csrf_enabled'] = False
         super().__init__(*args, **kwargs)
+
+
+class MessageForm(FlaskForm):
+    """
+    This class implements a form to send massages to other users, derived from 
+    FlaskForm.
+    """
+
+    message = TextAreaField('Message', validators=[DataRequired(), Length(
+        min=1, max=140)])
+    submit = SubmitField('Send')
