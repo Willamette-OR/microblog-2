@@ -176,7 +176,7 @@ class User(UserMixin, db.Model):
         followed = Post.query.join(followers, (followers.c.followed_id==Post.user_id)).filter(
             followers.c.follower_id==self.id)
         own = Post.query.filter_by(user_id=self.id)
-        return followed.union(own).order_by(Post.datetime.desc())
+        return followed.union(own).order_by(Post.timestamp.desc())
 
     def get_reset_password_token(self, expires_in=600):
         """This method gets a JWT token for password resets."""
@@ -218,7 +218,7 @@ class Post(SearchableMixin, db.Model):
     body = db.Column(db.String(140))
     # When you pass a function as a default, SQLAlchemy will set the field to the value of calling that function 
     # (note that I did not include the () after utcnow, so I'm passing the function itself, and not the result of calling it)
-    datetime = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     # The user_id field was initialized as a foreign key to user.id, which means that it references an id value from the users table. 
     # In this reference the user part is the name of the database table for the model.
     # For multi-word model names, snake case.

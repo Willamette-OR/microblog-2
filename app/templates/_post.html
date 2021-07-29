@@ -14,7 +14,7 @@
                 </span>
             {% endset %}
             {{ _('%(username)s said %(when)s:',
-                username=user_link, when=moment(post.datetime).fromNow()) }}
+                username=user_link, when=moment(post.timestamp).fromNow()) }}
             <br>
             <span id="post{{ post.id}}">
                 {{ post.body }}
