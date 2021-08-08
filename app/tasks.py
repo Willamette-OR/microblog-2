@@ -2,7 +2,7 @@ import time
 from rq import get_current_job
 
 
-def example(seconds):
+def example(user_id, seconds):
     job = get_current_job()
     print("Starting task")
     for i in range(seconds):

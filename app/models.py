@@ -1,5 +1,4 @@
 from datetime import datetime
-from rq import connections
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import current_app
 from flask_login import UserMixin
@@ -213,6 +212,30 @@ class User(UserMixin, db.Model):
         n = Notification(name=name, payload_json=json.dumps(data), user=self)
         db.session.add(n)
         return n
+
+    def launch_task(self, name, description, *args, **kwargs):
+        """
+        This method launches new tasks and logs them into the app database.
+        """
+
+        rq_job = current_app.task_queue.enqueue(
+            'app.tasks.' + name, self.id, *args, **kwargs)
+        task = Task(
+            id=rq_job.get_id(), name=name, description=description, user=self)
+        db.session.add(task)
+        
+        return task
+
+    def get_tasks_in_progress(self):
+        """This method gets all tasks in progress."""
+
+        return Task.query.filter_by(user=self, complete=False).all()
+
+    def get_task_in_progress(self, name):
+        """This method gets a specific task in progress."""
+
+        return Task.query.filter_by(
+            user=self, complete=False, name=name).first()
 
 
 @login.user_loader

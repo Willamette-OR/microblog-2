@@ -1,6 +1,5 @@
 from flask import Flask, request, current_app 
 from config import Config
-import os
 from flask_sqlalchemy import SQLAlchemy 
 from flask_migrate import Migrate  
 from flask_login import LoginManager
@@ -8,9 +7,12 @@ from flask_mail import Mail
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from flask_babel import Babel, lazy_gettext as _l
-import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
 from elasticsearch import Elasticsearch
+from redis import Redis
+import os
+import logging
+import rq
 
 
 db = SQLAlchemy()
@@ -42,6 +44,10 @@ def create_app(config_class=Config):
 
     # Initialize elasticsearch
     app.elasticsearch = Elasticsearch(app.config['ELASTICSEARCH_URL']) if app.config['ELASTICSEARCH_URL'] else None
+
+    # Initialize Redis queue
+    app.redis = Redis.from_url(app.config['REDIS_URL'])
+    app.task_queue = rq.Queue('microblog-tasks', connection=app.redis)
 
     # register the blueprint for authentication handling
     from app.auth import bp as auth_bp
