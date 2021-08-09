@@ -223,6 +223,7 @@ class User(UserMixin, db.Model):
         task = Task(
             id=rq_job.get_id(), name=name, description=description, user=self)
         db.session.add(task)
+        db.session.commit() # this line to be removed after debugging
         
         return task
 
