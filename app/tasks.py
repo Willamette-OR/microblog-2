@@ -68,9 +68,9 @@ def export_posts(user_id):
         total_posts = user.posts.count()
         for post in user.posts.order_by(Post.timestamp.asc()):
             data.append({'body': post.body})
-            time.sleep(1)
+            time.sleep(5)
             i += 1
-            _set_task_progress(100.0 * i / total_posts)
+            _set_task_progress(100 * i // total_posts)
         
         # email out the archive of posts
         send_mail(subject='Exported Posts', sender=app.config['ADMINS'][0],
