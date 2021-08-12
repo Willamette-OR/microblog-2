@@ -123,7 +123,12 @@
             $('#message_count').css('visibility', n ? 'visible' : 'hidden');
         }
 
-        // function to fetch unread message count from the server
+        // function to update the task progress
+        function set_task_progress(task_id, progress) {
+            $('#' + task_id + '-progress').text(progress);
+        }
+
+        // function to fetch new notifications from the server
         {% if current_user.is_authenticated %}
         $(function() {
             var since = 0;
@@ -131,14 +136,23 @@
                 $.ajax('{{ url_for('main.notifications') }}?since=' + since).done(
                     function(notifications) {
                         for (var i=0; i < notifications.length; i++) {
-                            if (notifications[i].name == 'unread_message_count')
-                                set_message_count(notifications[i].data);
+                            switch(notifications[i].name) {
+                                case 'unread_message_count':
+                                    set_message_count(notifications[i].data);
+                                    break;
+                                case 'task_progress':
+                                    set_task_progress(
+                                        notifications[i].data.task_id,
+                                        notifications[i].data.progress
+                                    );
+                                    break;
+                            };
                             since = notifications[i].timestamp;
                         }
                     }
                 );
             }, 10000);
-        })
+        });
         {% endif %}
     </script>
 {% endblock %}
@@ -153,6 +167,21 @@
             {% endfor %}
         {% endif %}
         {% endwith %}
+
+        {# display task progress #}
+        {% if current_user.is_authenticated %}
+            {% with tasks = current_user.get_tasks_in_progress() %}
+                {% for task in tasks %}
+                    <div class="alert alert-success" role="alert">
+                        {{ task.description }}
+                        <span id="{{ task.id }}-progress">
+                            {{ task.get_progress() }}
+                        </span>
+                        %
+                    </div>
+                {% endfor %}
+            {% endwith %}
+        {% endif %}
 
         {# application content needs to be provided in the app_content block #}
         {% block app_content %}{% endblock %}
