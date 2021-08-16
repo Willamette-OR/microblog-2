@@ -27,6 +27,11 @@ def before_request():
     # The get_locale() function returns a locale object, but since we only need the language code we will 
     # convert the object to a string using str()
     g.locale = str(get_locale()) if str(get_locale()) != 'zh' else 'zh-cn'
+
+    # add NOTIFICATION_INTERVAL_SECONDS to g to be accessible from the base 
+    # template
+    g.NOTIFICATION_INTERVAL_SECONDS = current_app.config[
+        'NOTIFICATION_INTERVAL_SECONDS']
     
 
 @bp.route('/', methods=['GET', 'POST'])
