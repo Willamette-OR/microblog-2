@@ -23,6 +23,8 @@ class Config:
     MS_TRANSLATOR_KEY = os.environ.get('MS_TRANSLATOR_KEY')
     ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
     REDIS_URL = os.environ.get('REDIS_URL') or 'redis://'
+    NOTIFICATION_INTERVAL_SECONDS = \
+        int(os.environ.get('NOTIFICATION_INTERVAL_SECONDS') or 10)
 
 
 class TestConfig(Config):
